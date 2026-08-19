@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPM Countdown</title>
+    <style>
+      /* CSS: Styling the page */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #222;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 300;
+        letter-spacing: 2px;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+
+      .countdown-container {
+        display: flex;
+        gap: 15px;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .time-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        border-radius: 10px;
+        min-width: 80px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        display: block;
+        color: #00d2ff; /* Cyber blue accent for study timer */
+      }
+
+      .end-timer .number {
+        color: #ff007f; /* Neon pink accent for SPM ending timer */
+      }
+
+      .label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .status-msg {
+        font-size: 1.2rem;
+        color: #00ff88;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+      }
+
+      /* Hide the end countdown section initially */
+      #end-section {
+        display: none;
+      }
+
+      /* Responsive design for mobile phones */
+      @media (max-width: 600px) {
+        .countdown-container {
+          gap: 8px;
+        }
+        .time-box {
+          min-width: 60px;
+          padding: 10px;
+        }
+        .number {
+          font-size: 1.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SPM</h1>
+
+    <!-- Start Countdown Section (Shown until SPM Starts) -->
+    <div id="start-section">
+      <div class="section-title">STUDY</div>
+      <div class="countdown-container" id="start-countdown">
+        <div class="time-box">
+          <span class="number" id="start-days">00</span>
+          <span class="label">Days</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="start-hours">00</span>
+          <span class="label">Hours</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="start-minutes">00</span>
+          <span class="label">Minutes</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="start-seconds">00</span>
+          <span class="label">Seconds</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Countdown Section (Appears only when SPM Starts) -->
+    <div id="end-section">
+      <div class="section-title">SPM FREEDOM</div>
+      <div class="countdown-container end-timer" id="end-countdown">
+        <div class="time-box">
+          <span class="number" id="end-days">00</span>
+          <span class="label">Days</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="end-hours">00</span>
+          <span class="label">Hours</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="end-minutes">00</span>
+          <span class="label">Minutes</span>
+        </div>
+        <div class="time-box">
+          <span class="number" id="end-seconds">00</span>
+          <span class="label">Seconds</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. Set the target dates
+      const startDate = new Date("OCT 26, 2026 00:00:00").getTime();
+      const endDate = new Date("DEC 17, 2026 17:00:00").getTime();
+
+      // Helper function to format and display numbers
+      function updateDisplay(prefix, distance) {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById(prefix + "-days").innerText =
+          days < 10 ? "0" + days : days;
+        document.getElementById(prefix + "-hours").innerText =
+          hours < 10 ? "0" + hours : hours;
+        document.getElementById(prefix + "-minutes").innerText =
+          minutes < 10 ? "0" + minutes : minutes;
+        document.getElementById(prefix + "-seconds").innerText =
+          seconds < 10 ? "0" + seconds : seconds;
+      }
+
+      // 2. Update the count down every 1 second
+      const timer = setInterval(function () {
+        const now = new Date().getTime();
+
+        const startDistance = startDate - now;
+        const endDistance = endDate - now;
+
+        if (startDistance > 0) {
+          // Phase 1: Before SPM starts -> Show study countdown, hide end timer
+          updateDisplay("start", startDistance);
+          document.getElementById("start-section").style.display = "block";
+          document.getElementById("end-section").style.display = "none";
+        } else if (endDistance > 0) {
+          // Phase 2: SPM has started -> Hide study countdown, reveal end timer
+          document.getElementById("start-section").style.display = "none";
+          document.getElementById("end-section").style.display = "block";
+          updateDisplay("end", endDistance);
+        } else {
+          // Phase 3: SPM is completely over -> Show celebration message
+          document.getElementById("start-section").style.display = "none";
+          document.getElementById("end-section").style.display = "block";
+          document.getElementById("end-countdown").innerHTML =
+            "<div class='status-msg'>You have done a great job! SPM is over! 🎉</div>";
+          clearInterval(timer);
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
